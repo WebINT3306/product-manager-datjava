@@ -31,50 +31,68 @@
             border-radius: 8px;
             margin-bottom: 30px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
         }
 
-        .form-container input {
+        .input-table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+        }
+
+        .input-table td {
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+
+        .input-table td:first-child {
+            width: 150px;
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-table input {
+            width: 100%;
             padding: 8px 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
             outline: none;
+            box-sizing: border-box;
         }
 
-        .form-container input:focus {
+        .input-table input:focus {
             border-color: var(--primary-color);
         }
 
         button#btn-add {
-            padding: 10px 20px;
+            padding: 10px 25px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            display: block;
+            margin-top: 10px;
         }
 
         button#btn-add:hover {
             background-color: var(--hover-color);
         }
 
-        table {
+        table#product-table {
             width: 100%;
             border-collapse: collapse;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        th, td {
+        table#product-table th, table#product-table td {
             border: 1px solid var(--border-color);
             padding: 12px 15px;
             text-align: left;
         }
 
-        th {
+        table#product-table th {
             background-color: #f1f3f5;
             font-weight: bold;
         }
@@ -102,11 +120,29 @@
     <h1>Quản lý Sản phẩm</h1>
 
     <div class="form-container">
-      <input id="input-name" placeholder="Tên sản phẩm">
-      <input id="input-category" placeholder="Danh mục">
-      <input type="number" id="input-price" placeholder="Đơn giá">
-      <input type="number" id="input-quantity" placeholder="Số lượng">
-      <button id="btn-add">Thêm sản phẩm</button>
+        <h2>Nhập thông tin sản phẩm</h2>
+        <table class="input-table">
+            <tr>
+                <td>Tên sản phẩm</td>
+                <td><input type="text" id="input-name" placeholder="Ví dụ: Laptop Dell"></td>
+            </tr>
+            <tr>
+                <td>Danh mục</td>
+                <td><input type="text" id="input-category" placeholder="Ví dụ: Điện tử"></td>
+            </tr>
+            <tr>
+                <td>Đơn giá</td>
+                <td><input type="number" id="input-price" placeholder="Nhập số tiền"></td>
+            </tr>
+            <tr>
+                <td>Số lượng</td>
+                <td><input type="number" id="input-quantity" placeholder="Nhập số lượng"></td>
+            </tr>
+            <tr>
+                <td>Hành động</td>
+                <td><button id="btn-add">Thêm sản phẩm</button></td>
+            </tr>
+        </table>
     </div>
     
     <table id="product-table">
@@ -146,7 +182,7 @@
                     <td>${index + 1}</td>
                     <td>${item.name}</td>
                     <td>${item.category || ''}</td>
-                    <td>${Number(item.price).toLocaleString()}</td>
+                    <td>${Number(item.price).toLocaleString()} đ</td>
                     <td>${item.quantity}</td>
                 `;
                 tableBodyElement.appendChild(tableRow);
@@ -160,7 +196,7 @@
                     productList = JSON.parse(dataRequest.responseText);
                     displayProductTable();
                 } catch (error) {
-                    console.error("Lỗi khi xử lý dữ liệu JSON: ", error);
+                    console.error(error);
                 }
             }
         };
@@ -169,11 +205,11 @@
 
         nameHeaderCell.addEventListener('click', function() {
             if (isSortAscending === null || isSortAscending === false) {
-                productList.sort((firstItem, secondItem) => firstItem.name.localeCompare(secondItem.name));
+                productList.sort((a, b) => a.name.localeCompare(b.name));
                 isSortAscending = true;
                 sortIndicatorIcon.textContent = ' ▲';
             } else {
-                productList.sort((firstItem, secondItem) => secondItem.name.localeCompare(firstItem.name));
+                productList.sort((a, b) => b.name.localeCompare(a.name));
                 isSortAscending = false;
                 sortIndicatorIcon.textContent = ' ▼';
             }
