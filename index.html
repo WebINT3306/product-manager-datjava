@@ -7,17 +7,22 @@
   <style>
     body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
     h2 { color: #333; }
+    
+
     .form-container { margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
     .form-group { margin-bottom: 10px; }
     label { display: inline-block; width: 120px; }
     input { padding: 5px; width: 250px; border: 1px solid #ccc; border-radius: 4px; }
     button { padding: 8px 15px; cursor: pointer; background-color: #28a745; color: white; border: none; border-radius: 4px; }
     button:hover { background-color: #218838; }
+
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
     th { background-color: #f2f2f2; cursor: pointer; user-select: none; }
+    
     tbody tr:nth-child(even) { background-color: #f9f9f9; }
     tbody tr:hover { background-color: #f1f1f1; }
+    
     .sort-icon { margin-left: 5px; font-size: 0.8em; }
   </style>
 </head>
@@ -55,12 +60,14 @@
         <th>Số lượng</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+      </tbody>
   </table>
 
   <script>
     let productList = [];
     let sortDirection = 0; 
+
     const tableBody = document.querySelector('#product-table tbody');
     const sortIndicator = document.getElementById('sort-indicator');
 
@@ -98,8 +105,16 @@
       const price = parseFloat(document.getElementById('input-price').value);
       const quantity = parseInt(document.getElementById('input-quantity').value);
 
-      if (name.length < 3 || isNaN(price) || price <= 0 || isNaN(quantity) || quantity < 1) {
-        alert("Vui lòng nhập đúng định dạng dữ liệu!");
+      if (name.length < 3) {
+        alert("Tên sản phẩm phải có ít nhất 3 ký tự!");
+        return;
+      }
+      if (isNaN(price) || price <= 0) {
+        alert("Đơn giá phải là số dương!");
+        return;
+      }
+      if (isNaN(quantity) || quantity < 1) {
+        alert("Số lượng phải là số nguyên ≥ 1!");
         return;
       }
 
@@ -111,23 +126,13 @@
         quantity: quantity
       };
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'products.json'); 
-      xhr.setRequestHeader('Content-Type', 'application/json');
+      productList.push(newProduct);
+      renderTable(productList);
 
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-          productList.push(newProduct);
-          renderTable(productList);
-
-          document.getElementById('input-name').value = '';
-          document.getElementById('input-category').value = '';
-          document.getElementById('input-price').value = '';
-          document.getElementById('input-quantity').value = '';
-        }
-      };
-
-      xhr.send(JSON.stringify(newProduct));
+      document.getElementById('input-name').value = '';
+      document.getElementById('input-category').value = '';
+      document.getElementById('input-price').value = '';
+      document.getElementById('input-quantity').value = '';
     });
 
     document.getElementById('sort-name-col').addEventListener('click', function() {
