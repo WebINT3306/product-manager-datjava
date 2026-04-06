@@ -18,86 +18,70 @@
             margin: 0;
             padding: 20px;
             color: #333;
-            background-color: #f4f7f6;
         }
 
         h1, h2 {
             color: #2c3e50;
         }
 
+        /* Styling cho Form thêm sản phẩm */
         .form-container {
             background-color: #fff;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
         }
 
-        .input-table {
-            width: 100%;
-            max-width: 500px;
-            border-collapse: collapse;
-        }
-
-        .input-table td {
-            padding: 12px 8px;
-        }
-
-        .input-table td:first-child {
-            width: 140px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .input-table input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
+        .form-container input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
             border-radius: 4px;
             outline: none;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
         }
 
-        .input-table input:focus {
+        .form-container input:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
         }
 
         button#btn-add {
-            padding: 10px 30px;
+            padding: 10px 20px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
         }
 
         button#btn-add:hover {
             background-color: var(--hover-color);
         }
 
-        table#product-table {
+        /* Styling cho Bảng sản phẩm */
+        table {
             width: 100%;
             border-collapse: collapse;
-            background: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        table#product-table th, table#product-table td {
+        th, td {
             border: 1px solid var(--border-color);
             padding: 12px 15px;
             text-align: left;
         }
 
-        table#product-table th {
+        th {
             background-color: #f1f3f5;
             font-weight: bold;
         }
 
+        /* Cột Tên sản phẩm có thể click để sort */
         th#sort-name {
             cursor: pointer;
             user-select: none;
@@ -107,6 +91,7 @@
             background-color: #e9ecef;
         }
 
+        /* Hàng chẵn/lẻ và Hover */
         tbody tr:nth-child(even) {
             background-color: var(--bg-even);
         }
@@ -118,131 +103,131 @@
 </head>
 <body>
 
-    <h1>Hệ thống Quản lý Sản phẩm</h1>
+    <h1>Quản lý Sản phẩm</h1>
 
     <div class="form-container">
-        <h2>Thêm sản phẩm mới</h2>
-        <table class="input-table">
-            <tr>
-                <td>Tên sản phẩm:</td>
-                <td><input type="text" id="input-name" placeholder="Ít nhất 3 ký tự"></td>
-            </tr>
-            <tr>
-                <td>Danh mục:</td>
-                <td><input type="text" id="input-category" placeholder="Nhập loại hàng"></td>
-            </tr>
-            <tr>
-                <td>Đơn giá:</td>
-                <td><input type="number" id="input-price" placeholder="Nhập giá dương"></td>
-            </tr>
-            <tr>
-                <td>Số lượng:</td>
-                <td><input type="number" id="input-quantity" placeholder="Nhập số lượng ≥ 1"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><button id="btn-add">Thêm vào danh sách</button></td>
-            </tr>
-        </table>
+      <input id="input-name" placeholder="Tên sản phẩm">
+      <input id="input-category" placeholder="Danh mục">
+      <input type="number" id="input-price" placeholder="Đơn giá">
+      <input type="number" id="input-quantity" placeholder="Số lượng">
+      <button id="btn-add">Thêm sản phẩm</button>
     </div>
     
     <table id="product-table">
         <thead>
-            <tr>
-                <th>STT</th>
-                <th id="sort-name">Tên sản phẩm <span id="sort-icon"></span></th>
-                <th>Danh mục</th>
-                <th>Đơn giá</th>
-                <th>Số lượng</th>
+<tr>
+                <th>ABC</th>
+                <th id="sort-name">Product name <span id="sort-icon"></span></th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
-        </tbody>
+            </tbody>
     </table>
 
     <script>
-        let productList = [];
-        let isSortAscending = null; 
+        
+        let products = [];
+        let sortState = null; 
 
-        const tableBodyElement = document.querySelector('#product-table tbody');
-        const nameHeaderCell = document.getElementById('sort-name');
-        const sortIndicatorIcon = document.getElementById('sort-icon');
+        const tbody = document.querySelector('#product-table tbody');
+        const sortNameHeader = document.getElementById('sort-name');
+        const sortIcon = document.getElementById('sort-icon');
 
-        const nameInputField = document.getElementById('input-name');
-        const categoryInputField = document.getElementById('input-category');
-        const priceInputField = document.getElementById('input-price');
-        const quantityInputField = document.getElementById('input-quantity');
-        const addProductButton = document.getElementById('btn-add');
+        
+        const inputName = document.getElementById('input-name');
+        const inputCategory = document.getElementById('input-category');
+        const inputPrice = document.getElementById('input-price');
+        const inputQuantity = document.getElementById('input-quantity');
+        const btnAdd = document.getElementById('btn-add');
 
-        function displayProductTable() {
-            tableBodyElement.innerHTML = ''; 
-            productList.forEach((item, index) => {
-                const tableRow = document.createElement('tr');
-                tableRow.innerHTML = `
+        
+        function renderTable() {
+            tbody.innerHTML = ''; 
+            
+            products.forEach((product, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${item.name}</td>
-                    <td>${item.category || 'N/A'}</td>
-                    <td>${Number(item.price).toLocaleString()} đ</td>
-                    <td>${item.quantity}</td>
+                    <td>${product.name}</td>
+                    <td>${product.category || ''}</td>
+                    <td>${product.price}</td>
+                    <td>${product.quantity}</td>
                 `;
-                tableBodyElement.appendChild(tableRow);
+                tbody.appendChild(tr);
             });
         }
 
-        const dataRequest = new XMLHttpRequest();
-        dataRequest.onreadystatechange = function() {
-            if (dataRequest.readyState === 4 && dataRequest.status === 200) {
+        
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
-                    productList = JSON.parse(dataRequest.responseText);
-                    displayProductTable();
-                } catch (error) {
-                    console.error(error);
+                    products = JSON.parse(xhr.responseText);
+                    renderTable();
+                } catch (e) {
+                    console.error("Lỗi khi parse file JSON: ", e);
                 }
             }
         };
-        dataRequest.open('GET', 'products.json', true);
-        dataRequest.send();
+        xhr.open('GET', 'products.json', true);
+        xhr.send();
 
-        nameHeaderCell.addEventListener('click', function() {
-            if (isSortAscending === null || isSortAscending === false) {
-                productList.sort((a, b) => a.name.localeCompare(b.name));
-                isSortAscending = true;
-                sortIndicatorIcon.textContent = ' ▲';
+        
+        sortNameHeader.addEventListener('click', function() {
+            if (sortState === null || sortState === false) {
+               
+                products.sort((a, b) => a.name.localeCompare(b.name));
+                sortState = true;
+                sortIcon.textContent = ' ▲';
             } else {
-                productList.sort((a, b) => b.name.localeCompare(a.name));
-                isSortAscending = false;
-                sortIndicatorIcon.textContent = ' ▼';
+               
+                products.sort((a, b) => b.name.localeCompare(a.name));
+                sortState = false;
+                sortIcon.textContent = ' ▼';
             }
-            displayProductTable();
+            renderTable();
         });
 
-        addProductButton.addEventListener('click', function() {
-            const enteredName = nameInputField.value.trim();
-            const enteredCategory = categoryInputField.value.trim();
-            const enteredPrice = parseFloat(priceInputField.value);
-            const enteredQuantity = parseInt(quantityInputField.value);
+       
+        btnAdd.addEventListener('click', function() {
+            const nameValue = inputName.value.trim();
+            const categoryValue = inputCategory.value.trim();
+            const priceValue = Number(inputPrice.value);
+            const quantityValue = Number(inputQuantity.value);
 
-            if (enteredName.length < 3 || isNaN(enteredPrice) || enteredPrice <= 0 || isNaN(enteredQuantity) || enteredQuantity < 1) {
-                alert("Dữ liệu không hợp lệ! Vui lòng kiểm tra lại tên (>=3 ký tự), giá và số lượng.");
+          
+            if (nameValue === "" || isNaN(priceValue) || isNaN(quantityValue)) {
                 return; 
             }
+const currentRows = tbody.querySelectorAll('tr').length;
 
-            const newProductEntry = {
+           
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${currentRows + 1}</td>
+                <td>${nameValue}</td>
+                <td>${categoryValue}</td>
+                <td>${priceValue}</td>
+                <td>${quantityValue}</td>
+            `;
+            tbody.appendChild(newRow);
+
+           
+            products.push({
                 id: Date.now(), 
-                name: enteredName,
-                category: enteredCategory || "Khác",
-                price: enteredPrice,
-                quantity: enteredQuantity
-            };
+                name: nameValue,
+                category: categoryValue,
+                price: priceValue,
+                quantity: quantityValue
+            });
 
-            productList.push(newProductEntry);
-            displayProductTable();
-
-            nameInputField.value = '';
-            categoryInputField.value = '';
-            priceInputField.value = '';
-            quantityInputField.value = '';
-            nameInputField.focus();
+            inputName.value = '';
+            inputCategory.value = '';
+            inputPrice.value = '';
+            inputQuantity.value = '';
         });
     </script>
 </body>
