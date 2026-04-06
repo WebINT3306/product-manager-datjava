@@ -18,7 +18,6 @@
             margin: 0;
             padding: 20px;
             color: #333;
-            line-height: 1.6;
         }
 
         h1, h2 {
@@ -43,8 +42,6 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             outline: none;
-            flex: 1;
-            min-width: 150px;
         }
 
         .form-container input:focus {
@@ -59,7 +56,6 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.3s;
         }
 
         button#btn-add:hover {
@@ -83,12 +79,12 @@
             font-weight: bold;
         }
 
-        th#sort-header {
+        th#sort-name {
             cursor: pointer;
             user-select: none;
         }
 
-        th#sort-header:hover {
+        th#sort-name:hover {
             background-color: #e9ecef;
         }
 
@@ -99,10 +95,6 @@
         tbody tr:hover {
             background-color: var(--bg-hover);
         }
-
-        #sort-icon {
-            margin-left: 5px;
-        }
     </style>
 </head>
 <body>
@@ -110,18 +102,18 @@
     <h1>Quản lý Sản phẩm</h1>
 
     <div class="form-container">
-        <input id="input-name" placeholder="Tên sản phẩm (ít nhất 3 ký tự)">
-        <input id="input-category" placeholder="Danh mục">
-        <input type="number" id="input-price" placeholder="Đơn giá (số dương)">
-        <input type="number" id="input-quantity" placeholder="Số lượng (≥ 1)">
-        <button id="btn-add">Thêm sản phẩm</button>
+      <input id="input-name" placeholder="Tên sản phẩm">
+      <input id="input-category" placeholder="Danh mục">
+      <input type="number" id="input-price" placeholder="Đơn giá">
+      <input type="number" id="input-quantity" placeholder="Số lượng">
+      <button id="btn-add">Thêm sản phẩm</button>
     </div>
     
     <table id="product-table">
         <thead>
             <tr>
                 <th>STT</th>
-                <th id="sort-header">Tên sản phẩm <span id="sort-icon"></span></th>
+                <th id="sort-name">Tên sản phẩm <span id="sort-icon"></span></th>
                 <th>Danh mục</th>
                 <th>Đơn giá</th>
                 <th>Số lượng</th>
@@ -133,10 +125,10 @@
 
     <script>
         let products = [];
-        let sortState = null;
+        let sortState = null; 
 
         const tbody = document.querySelector('#product-table tbody');
-        const sortHeader = document.getElementById('sort-header');
+        const sortNameHeader = document.getElementById('sort-name');
         const sortIcon = document.getElementById('sort-icon');
 
         const inputName = document.getElementById('input-name');
@@ -147,6 +139,7 @@
 
         function renderTable() {
             tbody.innerHTML = ''; 
+            
             products.forEach((product, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -174,39 +167,38 @@
         xhr.open('GET', 'products.json', true);
         xhr.send();
 
-        sortHeader.addEventListener('click', function() {
+        sortNameHeader.addEventListener('click', function() {
             if (sortState === null || sortState === false) {
                 products.sort((a, b) => a.name.localeCompare(b.name));
                 sortState = true;
-                sortIcon.textContent = '▲';
+                sortIcon.textContent = ' ▲';
             } else {
                 products.sort((a, b) => b.name.localeCompare(a.name));
                 sortState = false;
-                sortIcon.textContent = '▼';
+                sortIcon.textContent = ' ▼';
             }
             renderTable();
         });
 
         btnAdd.addEventListener('click', function() {
-            const nameVal = inputName.value.trim();
-            const cateVal = inputCategory.value.trim();
-            const priceVal = parseFloat(inputPrice.value);
-            const quantVal = parseInt(inputQuantity.value);
+            const name = inputName.value.trim();
+            const category = inputCategory.value.trim();
+            const price = Number(inputPrice.value);
+            const quantity = Number(inputQuantity.value);
 
-            if (nameVal.length < 3 || isNaN(priceVal) || priceVal <= 0 || isNaN(quantVal) || quantVal < 1) {
-                alert("Vui lòng kiểm tra lại thông tin nhập vào!");
-                return;
+            if (name === "" || isNaN(price) || isNaN(quantity) || price <= 0 || quantity < 1) {
+                alert("Vui lòng nhập dữ liệu hợp lệ!");
+                return; 
             }
 
-            const newProduct = {
-                id: Date.now(),
-                name: nameVal,
-                category: cateVal || "Chưa phân loại",
-                price: priceVal,
-                quantity: quantVal
-            };
+            products.push({
+                id: Date.now(), 
+                name: name,
+                category: category,
+                price: price,
+                quantity: quantity
+            });
 
-            products.push(newProduct);
             renderTable();
 
             inputName.value = '';
