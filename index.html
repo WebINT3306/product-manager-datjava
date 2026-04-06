@@ -18,6 +18,7 @@
             margin: 0;
             padding: 20px;
             color: #333;
+            background-color: #f4f7f6;
         }
 
         h1, h2 {
@@ -26,54 +27,53 @@
 
         .form-container {
             background-color: #fff;
-            padding: 20px;
+            padding: 25px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .input-table {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             border-collapse: collapse;
         }
 
         .input-table td {
-            padding: 10px;
-            border: 1px solid #eee;
+            padding: 12px 8px;
         }
 
         .input-table td:first-child {
-            width: 150px;
-            background-color: #f9f9f9;
+            width: 140px;
             font-weight: bold;
             color: #555;
         }
 
         .input-table input {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
+            padding: 10px;
+            border: 1px solid #ced4da;
             border-radius: 4px;
             outline: none;
             box-sizing: border-box;
+            transition: border-color 0.2s;
         }
 
         .input-table input:focus {
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
         }
 
         button#btn-add {
-            padding: 10px 25px;
+            padding: 10px 30px;
             background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            display: block;
-            margin-top: 10px;
+            transition: background 0.2s;
         }
 
         button#btn-add:hover {
@@ -83,6 +83,7 @@
         table#product-table {
             width: 100%;
             border-collapse: collapse;
+            background: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
@@ -117,30 +118,30 @@
 </head>
 <body>
 
-    <h1>Quản lý Sản phẩm</h1>
+    <h1>Hệ thống Quản lý Sản phẩm</h1>
 
     <div class="form-container">
-        <h2>Nhập thông tin sản phẩm</h2>
+        <h2>Thêm sản phẩm mới</h2>
         <table class="input-table">
             <tr>
-                <td>Tên sản phẩm</td>
-                <td><input type="text" id="input-name" placeholder="Ví dụ: Laptop Dell"></td>
+                <td>Tên sản phẩm:</td>
+                <td><input type="text" id="input-name" placeholder="Ít nhất 3 ký tự"></td>
             </tr>
             <tr>
-                <td>Danh mục</td>
-                <td><input type="text" id="input-category" placeholder="Ví dụ: Điện tử"></td>
+                <td>Danh mục:</td>
+                <td><input type="text" id="input-category" placeholder="Nhập loại hàng"></td>
             </tr>
             <tr>
-                <td>Đơn giá</td>
-                <td><input type="number" id="input-price" placeholder="Nhập số tiền"></td>
+                <td>Đơn giá:</td>
+                <td><input type="number" id="input-price" placeholder="Nhập giá dương"></td>
             </tr>
             <tr>
-                <td>Số lượng</td>
-                <td><input type="number" id="input-quantity" placeholder="Nhập số lượng"></td>
+                <td>Số lượng:</td>
+                <td><input type="number" id="input-quantity" placeholder="Nhập số lượng ≥ 1"></td>
             </tr>
             <tr>
-                <td>Hành động</td>
-                <td><button id="btn-add">Thêm sản phẩm</button></td>
+                <td></td>
+                <td><button id="btn-add">Thêm vào danh sách</button></td>
             </tr>
         </table>
     </div>
@@ -175,13 +176,12 @@
 
         function displayProductTable() {
             tableBodyElement.innerHTML = ''; 
-            
             productList.forEach((item, index) => {
                 const tableRow = document.createElement('tr');
                 tableRow.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${item.name}</td>
-                    <td>${item.category || ''}</td>
+                    <td>${item.category || 'N/A'}</td>
                     <td>${Number(item.price).toLocaleString()} đ</td>
                     <td>${item.quantity}</td>
                 `;
@@ -219,18 +219,18 @@
         addProductButton.addEventListener('click', function() {
             const enteredName = nameInputField.value.trim();
             const enteredCategory = categoryInputField.value.trim();
-            const enteredPrice = Number(priceInputField.value);
-            const enteredQuantity = Number(quantityInputField.value);
+            const enteredPrice = parseFloat(priceInputField.value);
+            const enteredQuantity = parseInt(quantityInputField.value);
 
-            if (enteredName === "" || isNaN(enteredPrice) || isNaN(enteredQuantity) || enteredPrice <= 0 || enteredQuantity < 1) {
-                alert("Dữ liệu nhập vào không hợp lệ!");
+            if (enteredName.length < 3 || isNaN(enteredPrice) || enteredPrice <= 0 || isNaN(enteredQuantity) || enteredQuantity < 1) {
+                alert("Dữ liệu không hợp lệ! Vui lòng kiểm tra lại tên (>=3 ký tự), giá và số lượng.");
                 return; 
             }
 
             const newProductEntry = {
                 id: Date.now(), 
                 name: enteredName,
-                category: enteredCategory,
+                category: enteredCategory || "Khác",
                 price: enteredPrice,
                 quantity: enteredQuantity
             };
