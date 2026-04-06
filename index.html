@@ -124,88 +124,89 @@
     </table>
 
     <script>
-        let products = [];
-        let sortState = null; 
+        let productList = [];
+        let isSortAscending = null; 
 
-        const tbody = document.querySelector('#product-table tbody');
-        const sortNameHeader = document.getElementById('sort-name');
-        const sortIcon = document.getElementById('sort-icon');
+        const tableBodyElement = document.querySelector('#product-table tbody');
+        const nameHeaderCell = document.getElementById('sort-name');
+        const sortIndicatorIcon = document.getElementById('sort-icon');
 
-        const inputName = document.getElementById('input-name');
-        const inputCategory = document.getElementById('input-category');
-        const inputPrice = document.getElementById('input-price');
-        const inputQuantity = document.getElementById('input-quantity');
-        const btnAdd = document.getElementById('btn-add');
+        const nameInputField = document.getElementById('input-name');
+        const categoryInputField = document.getElementById('input-category');
+        const priceInputField = document.getElementById('input-price');
+        const quantityInputField = document.getElementById('input-quantity');
+        const addProductButton = document.getElementById('btn-add');
 
-        function renderTable() {
-            tbody.innerHTML = ''; 
+        function displayProductTable() {
+            tableBodyElement.innerHTML = ''; 
             
-            products.forEach((product, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
+            productList.forEach((item, index) => {
+                const tableRow = document.createElement('tr');
+                tableRow.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${product.name}</td>
-                    <td>${product.category || ''}</td>
-                    <td>${Number(product.price).toLocaleString()}</td>
-                    <td>${product.quantity}</td>
+                    <td>${item.name}</td>
+                    <td>${item.category || ''}</td>
+                    <td>${Number(item.price).toLocaleString()}</td>
+                    <td>${item.quantity}</td>
                 `;
-                tbody.appendChild(tr);
+                tableBodyElement.appendChild(tableRow);
             });
         }
 
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
+        const dataRequest = new XMLHttpRequest();
+        dataRequest.onreadystatechange = function() {
+            if (dataRequest.readyState === 4 && dataRequest.status === 200) {
                 try {
-                    products = JSON.parse(xhr.responseText);
-                    renderTable();
-                } catch (e) {
-                    console.error(e);
+                    productList = JSON.parse(dataRequest.responseText);
+                    displayProductTable();
+                } catch (error) {
+                    console.error("Lỗi khi xử lý dữ liệu JSON: ", error);
                 }
             }
         };
-        xhr.open('GET', 'products.json', true);
-        xhr.send();
+        dataRequest.open('GET', 'products.json', true);
+        dataRequest.send();
 
-        sortNameHeader.addEventListener('click', function() {
-            if (sortState === null || sortState === false) {
-                products.sort((a, b) => a.name.localeCompare(b.name));
-                sortState = true;
-                sortIcon.textContent = ' ▲';
+        nameHeaderCell.addEventListener('click', function() {
+            if (isSortAscending === null || isSortAscending === false) {
+                productList.sort((firstItem, secondItem) => firstItem.name.localeCompare(secondItem.name));
+                isSortAscending = true;
+                sortIndicatorIcon.textContent = ' ▲';
             } else {
-                products.sort((a, b) => b.name.localeCompare(a.name));
-                sortState = false;
-                sortIcon.textContent = ' ▼';
+                productList.sort((firstItem, secondItem) => secondItem.name.localeCompare(firstItem.name));
+                isSortAscending = false;
+                sortIndicatorIcon.textContent = ' ▼';
             }
-            renderTable();
+            displayProductTable();
         });
 
-        btnAdd.addEventListener('click', function() {
-            const name = inputName.value.trim();
-            const category = inputCategory.value.trim();
-            const price = Number(inputPrice.value);
-            const quantity = Number(inputQuantity.value);
+        addProductButton.addEventListener('click', function() {
+            const enteredName = nameInputField.value.trim();
+            const enteredCategory = categoryInputField.value.trim();
+            const enteredPrice = Number(priceInputField.value);
+            const enteredQuantity = Number(quantityInputField.value);
 
-            if (name === "" || isNaN(price) || isNaN(quantity) || price <= 0 || quantity < 1) {
-                alert("Vui lòng nhập dữ liệu hợp lệ!");
+            if (enteredName === "" || isNaN(enteredPrice) || isNaN(enteredQuantity) || enteredPrice <= 0 || enteredQuantity < 1) {
+                alert("Dữ liệu nhập vào không hợp lệ!");
                 return; 
             }
 
-            products.push({
+            const newProductEntry = {
                 id: Date.now(), 
-                name: name,
-                category: category,
-                price: price,
-                quantity: quantity
-            });
+                name: enteredName,
+                category: enteredCategory,
+                price: enteredPrice,
+                quantity: enteredQuantity
+            };
 
-            renderTable();
+            productList.push(newProductEntry);
+            displayProductTable();
 
-            inputName.value = '';
-            inputCategory.value = '';
-            inputPrice.value = '';
-            inputQuantity.value = '';
-            inputName.focus();
+            nameInputField.value = '';
+            categoryInputField.value = '';
+            priceInputField.value = '';
+            quantityInputField.value = '';
+            nameInputField.focus();
         });
     </script>
 </body>
